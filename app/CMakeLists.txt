@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.13.1)
+# SPDX-License-Identifier: Apache-2.0
+
+cmake_minimum_required(VERSION 3.20.0)
 
 # Find OpenHaystack module
 list(APPEND ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_SOURCE_DIR}/../modules/openhaystack)
@@ -10,6 +12,3 @@ project(openhaystack-firmware)
 
 # Source files to the "app" target
 target_sources(app PRIVATE src/main.c)
-if(CONFIG_USB_UART_CONSOLE)
-  target_sources(app PRIVATE src/debug.c)
-endif()

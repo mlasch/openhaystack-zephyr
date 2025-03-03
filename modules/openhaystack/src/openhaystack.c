@@ -27,15 +27,14 @@ struct bt_le_adv_param of_adv_param = {
  * Template with manufacturer data of the Offline Finding advertisement
  */
 uint8_t of_manufacturer_data[] = {
-	0x4c, 0x00,                                     // Company ID (Apple)
-	0x12,                                           // Offline Finding type
-	0x19,                                           // Offline Finding data length in bytes
-	0x00,                                           // Status (e.g. battery level)
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Public key bytes 6..27
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00,   // First two bits of public key
-	0x00    // Hint (0x00 on iOS reports)
+    0x4c, 0x00,                                     // Company ID (Apple)
+    0x12,                                           // Offline Finding type
+    0x19,                                           // Offline Finding data length in bytes
+    0x01,                                           // Status (e.g. battery level)
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Public key bytes 6..27
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x02, // First two bits of public key
+    0x56  // Hint (0x00 on iOS reports)
 };
 
 /*
@@ -70,6 +69,6 @@ void of_set_manufacturer_data_from_key(uint8_t data[29], char key[28])
 	//                         vvvvvvvvvvvvvvvvvvvvvv
 	// Manufacturer data: 01234567890123456789012345678
 	memcpy(&data[5], &key[6], 22);
-	// Append first two bits of public key
-	data[27] = key[0] >> 6;
+        // Append first two bits of public key
+        // data[27] = key[0] >> 6;
 }
