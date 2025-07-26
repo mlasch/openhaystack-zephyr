@@ -4,31 +4,30 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
-    container: zephyrprojectrtos/ci:latest
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/zephyrproject-rtos/ci:main
+    env:
+      CMAKE_PREFIX_PATH: /opt/toolchains
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: openhaystack-zephyr
-      - name: Initialize
-        working-directory: openhaystack-zephyr
+      - uses: actions/checkout@v4
+      - name: Initialize west
         run: |
-          pip3 install -U west
           west init -l .
           west update
-          pip3 install -r ../zephyr/scripts/requirements-base.txt
-      - name: Install Zephyr toolchain
+      - name: Build firmware nrf52840dk_nrf52840
         run: |
-          wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.13.2/zephyr-sdk-0.13.2-linux-x86_64-setup.run
-          chmod +x zephyr-sdk-0.13.2-linux-x86_64-setup.run
-          ./zephyr-sdk-0.13.2-linux-x86_64-setup.run -- -d ~/zephyr-sdk-0.13.2
-      - name: Build firmware
-        working-directory: openhaystack-zephyr
+          west build -d build-nrf52840dk_nrf52840 -b nrf52840dk/nrf52840 app
+      - name: Build firmware holyiot_yj17095
         run: |
-          west build -b nrf52840dongle_nrf52840 -s app
-      - name: Archive firmware
-        uses: actions/upload-artifact@v2
+          west build -d build-holyiot_yj17095 -b holyiot_yj17095 app
+      - name: Archive firmware nrf52840dk_nrf52840
+        uses: actions/upload-artifact@v4
         with:
-          name: firmware
-          path: openhaystack-zephyr/build/zephyr/zephyr.*
+          name: firmware_nrf52840dk_nrf52840
+          path: build-nrf52840dk_nrf52840/zephyr/*.hex
+      - name: Archive firmware holyiot_yj17095
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware_holyiot_yj17095
+          path: build-holyiot_yj17095/zephyr/*.hex
